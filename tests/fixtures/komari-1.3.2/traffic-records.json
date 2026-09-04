@@ -1,0 +1,43 @@
+{
+  "count": 4,
+  "from": "2026-08-23T16:00:00Z",
+  "to": "2026-08-30T16:00:00Z",
+  "records": {
+    "node-a": [
+      {
+        "client": "node-a",
+        "time": "2026-08-24T00:00:00Z",
+        "traffic_up": 100,
+        "traffic_down": 200,
+        "net_total_up": 1000,
+        "net_total_down": 2000
+      },
+      {
+        "client": "node-a",
+        "time": "2026-08-24T01:00:00Z",
+        "traffic_up": 10,
+        "traffic_down": 20,
+        "net_total_up": 1010,
+        "net_total_down": 2020
+      }
+    ],
+    "node-b": [
+      {
+        "client": "node-b",
+        "time": "2026-08-24T00:00:00Z",
+        "traffic_up": 0,
+        "traffic_down": 0,
+        "net_total_up": 500,
+        "net_total_down": 600
+      },
+      {
+        "client": "node-b",
+        "time": "2026-08-24T01:00:00Z",
+        "traffic_up": 0,
+        "traffic_down": 0,
+        "net_total_up": 500,
+        "net_total_down": 600
+      }
+    ]
+  }
+}

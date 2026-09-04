@@ -1,0 +1,67 @@
+{
+  "start": "2026-08-23T16:00:00Z",
+  "end": "2026-08-30T16:00:00Z",
+  "server_downsample_default": true,
+  "default_points": 500,
+  "count": 4,
+  "series": [
+    {
+      "metric_key": "traffic.up",
+      "entity_id": "node-a",
+      "type": "gauge",
+      "unit": "bytes",
+      "retention_days": 30,
+      "downsampled": true,
+      "downsample_algorithm": "sum",
+      "max_points": 336,
+      "interval_seconds": 1800,
+      "count": 2,
+      "points": [
+        { "time": "2026-08-24T00:00:00Z", "value": 100, "count": 5 },
+        { "time": "2026-08-24T00:30:00Z", "value": 200, "count": 5 }
+      ]
+    },
+    {
+      "metric_key": "traffic.down",
+      "entity_id": "node-a",
+      "type": "gauge",
+      "unit": "bytes",
+      "retention_days": 30,
+      "downsampled": true,
+      "downsample_algorithm": "sum",
+      "max_points": 336,
+      "interval_seconds": 1800,
+      "count": 2,
+      "points": [
+        { "time": "2026-08-24T00:00:00Z", "value": 400, "count": 5 },
+        { "time": "2026-08-24T00:30:00Z", "value": 500, "count": 5 }
+      ]
+    },
+    {
+      "metric_key": "traffic.up",
+      "entity_id": "node-b",
+      "type": "gauge",
+      "unit": "bytes",
+      "retention_days": 30,
+      "downsampled": true,
+      "downsample_algorithm": "sum",
+      "max_points": 336,
+      "interval_seconds": 1800,
+      "count": 1,
+      "points": [{ "time": "2026-08-24T00:00:00Z", "value": 0, "count": 5 }]
+    },
+    {
+      "metric_key": "traffic.down",
+      "entity_id": "node-b",
+      "type": "gauge",
+      "unit": "bytes",
+      "retention_days": 30,
+      "downsampled": true,
+      "downsample_algorithm": "sum",
+      "max_points": 336,
+      "interval_seconds": 1800,
+      "count": 1,
+      "points": [{ "time": "2026-08-24T00:00:00Z", "value": 0, "count": 5 }]
+    }
+  ]
+}

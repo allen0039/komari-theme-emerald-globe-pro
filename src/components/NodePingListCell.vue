@@ -1,0 +1,73 @@
+<script setup lang="ts">
+import NodePingCacheMarker from '@/components/NodePingCacheMarker.vue'
+import { DataTooltip } from '@/components/ui/data-tooltip'
+import { useNodePingDisplay } from '@/composables/useNodePingDisplay'
+
+const props = defineProps<{
+  uuid: string
+  online: boolean
+}>()
+
+const {
+  latencyRenderBars,
+  lossRenderBars,
+  isCached: isPingCached,
+  cachedAt: pingCachedAt,
+  topPingNetworks,
+} = useNodePingDisplay(() => props.uuid)
+</script>
+
+<template>
+  <div class="flex flex-col">
+    <div v-if="topPingNetworks.length > 0" class="flex flex-row">
+      <DataTooltip
+        v-for="(net, index) in topPingNetworks" :key="net.name" placement="top"
+        :content="`${net.name}\n延迟 ${net.latency}\n丢包 ${net.loss}`"
+        content-class="whitespace-pre-wrap w-max px-1.5 !leading-[1.2] text-[11px]"
+      >
+        <div class="truncate text-[10px]">
+          <span v-if="index" class="mx-1">·</span>
+          <span :class="net.latencyToneClass">{{ net.latency }}</span>
+        </div>
+      </DataTooltip>
+      <NodePingCacheMarker class="ml-1" :is-cached="isPingCached" :cached-at="pingCachedAt" />
+    </div>
+    <div v-else class="truncate">
+      N/A
+    </div>
+    <div class="flex flex-col gap-[1px] w-full pr-4">
+      <div class="relative items-center gap-1">
+        <div
+          class="grid h-1 cursor-auto items-end gap-[1px] transition-all hover:h-2.5"
+          :style="{ gridTemplateColumns: `repeat(${latencyRenderBars.length}, minmax(0, 1fr))` }"
+        >
+          <DataTooltip
+            v-for="bar in latencyRenderBars" :key="bar.key" placement="top" :content="bar.tooltip"
+            class="h-full w-full" content-class="whitespace-pre-wrap w-max px-1.5 !leading-[1.2] text-[11px]"
+          >
+            <span
+              class="block h-full w-full rounded-[1px] transition-all hover:scale-y-160"
+              :class="bar.className"
+            />
+          </DataTooltip>
+        </div>
+      </div>
+      <div class="relative items-center gap-1">
+        <div
+          class="grid h-1 cursor-auto items-end gap-[1px] transition-all hover:h-2.5"
+          :style="{ gridTemplateColumns: `repeat(${lossRenderBars.length}, minmax(0, 1fr))` }"
+        >
+          <DataTooltip
+            v-for="bar in lossRenderBars" :key="bar.key" placement="top" :content="bar.tooltip"
+            class="h-full w-full" content-class="whitespace-pre-wrap w-max px-1.5 !leading-[1.2] text-[11px]"
+          >
+            <span
+              class="block h-full w-full rounded-[1px] transition-all hover:scale-y-160"
+              :class="bar.className"
+            />
+          </DataTooltip>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
