@@ -2,7 +2,7 @@
   "name": "Emerald Globe Pro",
   "short": "emerald-globe-pro",
   "description": "面向 Komari 的全球探针监控主题，集成资源分析、流量趋势与风险概览",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Davies_Allen",
   "url": "https://github.com/allen0039/komari-theme-emerald-globe-pro",
   "preview": "preview.png",
