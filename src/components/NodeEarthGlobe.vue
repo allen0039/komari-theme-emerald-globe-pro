@@ -19,7 +19,6 @@ const props = defineProps<{
 }>()
 
 const EARTH_DAY_TEXTURE = '/images/earth/earth-blue-marble.jpg'
-const EARTH_NIGHT_TEXTURE = '/images/earth/earth-night.jpg'
 const EARTH_BUMP_MAP = '/images/earth/earth-topology.png'
 const EARTH_SPECULAR_MAP = '/images/earth/earth-water.png'
 const CHINA_COORD = getCoordByCode('CN') ?? [35.8617, 104.1954]
@@ -162,10 +161,6 @@ const totalServers = computed(() => displayNodes.value.length)
 const onlineServers = computed(() => displayNodes.value.filter(node => node.online).length)
 const offlineServers = computed(() => totalServers.value - onlineServers.value)
 
-function earthTextureUrl(): string {
-  return appStore.isDark ? EARTH_NIGHT_TEXTURE : EARTH_DAY_TEXTURE
-}
-
 function createElement<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   className: string,
@@ -239,16 +234,15 @@ function arcColor(): string {
 function applyMaterialStyle() {
   if (!globe || !globeMaterial)
     return
-  globe.globeImageUrl(earthTextureUrl())
-  globeMaterial.bumpScale = appStore.isDark ? 0.018 : 0.03
-  globeMaterial.shininess = appStore.isDark ? 7 : 14
-  globeMaterial.emissive.set(appStore.isDark ? 0x142B47 : 0x244C69)
-  globeMaterial.emissiveIntensity = appStore.isDark ? 0.46 : 0.26
+  globeMaterial.bumpScale = 0.03
+  globeMaterial.shininess = 14
+  globeMaterial.emissive.set(0x244C69)
+  globeMaterial.emissiveIntensity = 0.26
   globeMaterial.needsUpdate = true
   globe
     .arcColor(arcColor)
-    .atmosphereColor(appStore.isDark ? '#38bdf8' : '#60a5fa')
-    .atmosphereAltitude(appStore.isDark ? 0.13 : 0.1)
+    .atmosphereColor('#60a5fa')
+    .atmosphereAltitude(0.1)
 }
 
 function syncDataToGlobe() {
@@ -282,7 +276,7 @@ async function startGlobe() {
       .width(width)
       .height(height)
       .backgroundColor('rgba(0,0,0,0)')
-      .globeImageUrl(earthTextureUrl())
+      .globeImageUrl(EARTH_DAY_TEXTURE)
       .bumpImageUrl(EARTH_BUMP_MAP)
       .showAtmosphere(true)
       .arcsData(arcsData.value)
@@ -320,17 +314,17 @@ async function startGlobe() {
         globeMaterial.specularMap = waterSpecularMap
         globeMaterial.needsUpdate = true
       })
-      globeMaterial.specular = new THREE.Color(appStore.isDark ? 0x64748B : 0x475569)
+      globeMaterial.specular = new THREE.Color(0x475569)
     }
 
-    const frontLight = new THREE.DirectionalLight(0xFFFFFF, appStore.isDark ? 0.92 : 1.08)
+    const frontLight = new THREE.DirectionalLight(0xFFFFFF, 1.08)
     frontLight.position.set(1.2, 1.1, 1.6)
-    const leftFill = new THREE.DirectionalLight(0xDBEAFE, appStore.isDark ? 0.58 : 0.46)
+    const leftFill = new THREE.DirectionalLight(0xDBEAFE, 0.46)
     leftFill.position.set(-1.2, 0.2, 1.2)
-    const rearFill = new THREE.DirectionalLight(0xE0F2FE, appStore.isDark ? 0.46 : 0.34)
+    const rearFill = new THREE.DirectionalLight(0xE0F2FE, 0.34)
     rearFill.position.set(-1, -0.8, -1.2)
     globe.lights([
-      new THREE.AmbientLight(0xFFFFFF, appStore.isDark ? 1.7 : 1.35),
+      new THREE.AmbientLight(0xFFFFFF, 1.35),
       frontLight,
       leftFill,
       rearFill,
@@ -378,7 +372,7 @@ watch([clusterSignature, rateSignature, userCoord], () => {
 })
 
 watch(() => appStore.isDark, () => {
-  applyMaterialStyle()
+  globe?.arcColor(arcColor)
 })
 
 watch(() => appStore.earthViewMode, (mode) => {
