@@ -13,7 +13,7 @@ describe('scrollable list row sizing', () => {
     expect(quotaRankingSource).toContain('class="grid h-8 min-w-0')
     expect(pressureHeatmapSource).toContain('max-h-[8.5rem] overflow-y-auto')
     expect(pressureHeatmapSource).toContain('class="grid h-7 min-w-0')
-    expect(costOverviewSource).toContain('grid max-h-69 auto-rows-13 gap-1 overflow-y-auto overscroll-contain')
+    expect(costOverviewSource).toContain('grid max-h-55 auto-rows-13 gap-1 overflow-y-auto overscroll-contain')
     expect(costOverviewSource).toContain('rounded-sm border border-border/45 bg-muted/20')
     expect(costOverviewSource).toContain('grid gap-px overflow-hidden rounded-sm border border-border/50 bg-border/50 sm:grid-cols-2')
     expect(costOverviewSource).toContain('xl:min-h-[6.75rem]')

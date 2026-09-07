@@ -283,7 +283,7 @@ describe('cost overview panel rendering', () => {
     expect(html).toContain('grid items-start gap-4 xl:grid-cols-[minmax(20rem,0.95fr)_minmax(0,1.05fr)]')
     expect(html).toContain('grid gap-px overflow-hidden rounded-sm border border-border/50 bg-border/50 sm:grid-cols-2')
     expect(html).toContain('flex min-h-24 min-w-0 flex-col justify-between gap-4 bg-background/80 px-3 py-3 xl:min-h-[6.75rem]')
-    expect(html).toContain('grid max-h-69 auto-rows-13 gap-1 overflow-y-auto overscroll-contain')
+    expect(html).toContain('grid max-h-55 auto-rows-13 gap-1 overflow-y-auto overscroll-contain')
     expect(html).toContain('grid-cols-[1rem_minmax(0,1fr)_auto] items-center gap-2 rounded-sm border border-border/45 bg-muted/20 px-2')
     expect(html).toContain('/月')
     expect(html).toContain('text-right text-xs tabular-nums text-muted-foreground">1</span>')

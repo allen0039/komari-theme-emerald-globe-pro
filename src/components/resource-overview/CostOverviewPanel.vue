@@ -129,7 +129,7 @@ const summary = computed(() => {
             </p>
             <span class="text-xs tabular-nums text-muted-foreground">共 {{ ranking.length }} 台</span>
           </div>
-          <ol class="grid max-h-69 auto-rows-13 gap-1 overflow-y-auto overscroll-contain pr-2 [scrollbar-gutter:stable]" :aria-label="`月均成本排行，共 ${ranking.length} 台`">
+          <ol class="grid max-h-55 auto-rows-13 gap-1 overflow-y-auto overscroll-contain pr-2 [scrollbar-gutter:stable]" :aria-label="`月均成本排行，共 ${ranking.length} 台`">
             <li v-for="(row, index) in ranking" :key="row.uuid" class="grid min-w-0 grid-cols-[1rem_minmax(0,1fr)_auto] items-center gap-2 rounded-sm border border-border/45 bg-muted/20 px-2 sm:grid-cols-[1rem_minmax(0,1fr)_minmax(2rem,0.6fr)_auto]">
               <span class="text-right text-xs tabular-nums text-muted-foreground">{{ index + 1 }}</span>
               <span class="truncate text-sm font-medium text-foreground" :title="row.name">{{ row.name }}</span>
