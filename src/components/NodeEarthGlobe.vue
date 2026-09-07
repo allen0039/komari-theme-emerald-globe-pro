@@ -450,36 +450,37 @@ watch(shouldRender, (visible) => {
 .earth-globe-host :deep(.earth-rate-panel) {
   position: relative;
   z-index: 2;
-  padding: 0.125rem 0.25rem;
-  border: 1px solid rgb(255 255 255 / 38%);
-  border-radius: 0.25rem;
-  background: color-mix(in srgb, var(--background) 68%, transparent);
-  box-shadow: 0 5px 18px rgb(15 23 42 / 12%);
-  backdrop-filter: blur(7px);
-  font-size: 0.75rem;
-  line-height: 1rem;
+  padding: 0.1875rem 0.375rem;
+  border: 1px solid rgb(203 224 237 / 14%);
+  border-radius: 0.4375rem;
+  background: rgb(13 35 52 / 78%);
+  color: #e2eaf0;
+  box-shadow: 0 2px 8px rgb(4 16 27 / 16%);
+  backdrop-filter: blur(8px);
+  font-size: 0.625rem;
+  line-height: 0.875rem;
   white-space: nowrap;
 }
 
 .earth-globe-host :deep(.earth-rate-row) {
   display: flex;
   align-items: center;
-  gap: 0.125rem;
+  gap: 0.25rem;
   font-variant-numeric: tabular-nums;
 }
 
-.earth-globe-host :deep(.earth-rate-up) {
-  color: #16a34a;
+.earth-globe-host :deep(.earth-rate-up .earth-rate-arrow) {
+  color: #79c9ab;
 }
 
-.earth-globe-host :deep(.earth-rate-down) {
-  color: #2563eb;
+.earth-globe-host :deep(.earth-rate-down .earth-rate-arrow) {
+  color: #8db9df;
 }
 
 .earth-globe-host :deep(.earth-rate-arrow) {
-  width: 0.75rem;
-  font-size: 0.8rem;
-  font-weight: 700;
+  width: 0.5rem;
+  font-size: 0.625rem;
+  font-weight: 500;
   line-height: 1;
   text-align: center;
 }
