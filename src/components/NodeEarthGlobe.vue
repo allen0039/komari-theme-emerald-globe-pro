@@ -406,7 +406,7 @@ watch(shouldRender, (visible) => {
     <div
       ref="globeHostRef"
       class="earth-globe-host absolute inset-0 w-full h-full select-none touch-none cursor-grab active:cursor-grabbing"
-      :class="props.compact && 'earth-globe-host-compact'"
+      :class="{ 'earth-globe-host-compact': props.compact, 'earth-globe-host-dark': appStore.isDark }"
     />
 
     <div
@@ -427,8 +427,23 @@ watch(shouldRender, (visible) => {
 
 <style scoped>
 .earth-globe-host {
+  --earth-label-bg: rgb(245 251 245 / 72%);
+  --earth-label-border: rgb(255 255 255 / 32%);
+  --earth-label-text: #334b4b;
+  --earth-label-up: #408c78;
+  --earth-label-down: #5a819e;
+  --earth-label-shadow: rgb(30 54 44 / 8%);
   contain: layout paint;
   background: transparent;
+}
+
+.earth-globe-host-dark {
+  --earth-label-bg: rgb(28 39 43 / 72%);
+  --earth-label-border: rgb(211 229 223 / 12%);
+  --earth-label-text: #dce7e3;
+  --earth-label-up: #8ebcaa;
+  --earth-label-down: #94afc4;
+  --earth-label-shadow: rgb(0 10 16 / 14%);
 }
 
 .earth-globe-host :deep(canvas),
@@ -451,11 +466,11 @@ watch(shouldRender, (visible) => {
   position: relative;
   z-index: 2;
   padding: 0.1875rem 0.375rem;
-  border: 1px solid rgb(203 224 237 / 14%);
+  border: 1px solid var(--earth-label-border);
   border-radius: 0.4375rem;
-  background: rgb(13 35 52 / 78%);
-  color: #e2eaf0;
-  box-shadow: 0 2px 8px rgb(4 16 27 / 16%);
+  background: var(--earth-label-bg);
+  color: var(--earth-label-text);
+  box-shadow: 0 2px 6px var(--earth-label-shadow);
   backdrop-filter: blur(8px);
   font-size: 0.625rem;
   line-height: 0.875rem;
@@ -470,11 +485,11 @@ watch(shouldRender, (visible) => {
 }
 
 .earth-globe-host :deep(.earth-rate-up .earth-rate-arrow) {
-  color: #79c9ab;
+  color: var(--earth-label-up);
 }
 
 .earth-globe-host :deep(.earth-rate-down .earth-rate-arrow) {
-  color: #8db9df;
+  color: var(--earth-label-down);
 }
 
 .earth-globe-host :deep(.earth-rate-arrow) {
