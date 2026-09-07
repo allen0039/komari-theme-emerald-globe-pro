@@ -85,7 +85,7 @@ describe('public cost overview derivation', () => {
     expect(model.formattedDueSoon).toMatchObject({ currency: 'CNY', symbol: '¥', value: '30.00' })
     expect(model.monthlyRanking).toMatchObject([
       { uuid: 'monthly', formattedMonthly: { value: '30.00' }, visualPercentage: 100, billingCycleLabel: '月付' },
-      { uuid: 'annual', formattedMonthly: { value: '9.86' }, billingCycleLabel: '年付' },
+      { uuid: 'annual', formattedMonthly: { value: '9.86' }, billingCycleLabel: '年付', formattedBillingAmount: { currency: 'CNY', value: '120.00' } },
     ])
     expect(model.rateSource).toBe('default')
   })

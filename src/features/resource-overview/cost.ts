@@ -20,6 +20,7 @@ export interface MonthlyCostRankingRow {
   formattedMonthly: ReturnType<typeof formatFinanceAmount>
   visualPercentage: number
   billingCycleLabel: string
+  formattedBillingAmount?: ReturnType<typeof formatFinanceAmount>
 }
 
 export interface CostOverviewViewModel {
@@ -106,6 +107,7 @@ function buildMonthlyCostRanking(
     formattedMonthly: format(monthlyCostCNY),
     visualPercentage: highestMonthlyCost === 0 ? 0 : monthlyCostCNY / highestMonthlyCost * 100,
     billingCycleLabel: formatBillingCycleLabel(node.billing_cycle),
+    formattedBillingAmount: formatFinanceAmount(Number(node.price), resolveCurrency(node.currency)!),
   }))
 }
 
@@ -121,7 +123,7 @@ function compareNodeIdentity(a: Pick<NodeData, 'name' | 'uuid'>, b: Pick<NodeDat
 
 function formatBillingCycleLabel(billingCycle: number): string {
   const label = getBillingCycleText(billingCycle)
-  return label === '月' || label === '年' ? `${label}付` : label
+  return ['月', '季', '半年', '年', '两年', '三年', '五年'].includes(label) ? `${label}付` : label
 }
 
 function isPricedNode(node: NodeData): boolean {
