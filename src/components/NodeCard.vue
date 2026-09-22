@@ -48,6 +48,7 @@ const {
   isCached: isPingCached,
   cachedAt: pingCachedAt,
   topPingNetworks,
+  summaryPingNetworks,
 } = useNodePingDisplay(() => props.node.uuid)
 
 const trafficUsedPercentage = computed(() => getTrafficUsedPercentage(props.node))
@@ -236,10 +237,10 @@ function openPingDialog() {
             </div>
             <template v-if="!appStore.showPingNetworkDetails">
               <div class="flex items-center gap-1">
-                <NodePingNetworkSummaryRow class="min-w-0 flex-1" label="三网" metric="latency" :networks="topPingNetworks" />
+                <NodePingNetworkSummaryRow class="min-w-0 flex-1" label="三网" metric="latency" :networks="summaryPingNetworks" />
                 <NodePingCacheMarker :is-cached="isPingCached" :cached-at="pingCachedAt" />
               </div>
-              <NodePingNetworkSummaryRow label="丢包" metric="loss" :networks="topPingNetworks" />
+              <NodePingNetworkSummaryRow label="丢包" metric="loss" :networks="summaryPingNetworks" />
               <div class="grid grid-cols-6 gap-x-3">
                 <!-- 延迟 -->
                 <div

@@ -10,8 +10,9 @@ export type NodePingMetric = 'latency' | 'loss'
 // getRecords 在新版主控中返回的是近期可用样本，不保证覆盖完整 1 小时。
 const RECENT_PING_RECORDS_QUERY_HOURS = 1
 
-// 三网延迟固定展示的记录数量
+// 明细 / 列表保持原有最多 3 条；摘要卡片可展示更多探测线路。
 const PING_NETWORK_DISPLAY_COUNT = 3
+const PING_NETWORK_SUMMARY_DISPLAY_COUNT = 6
 
 export interface NodePingBar {
   key: string
@@ -222,21 +223,21 @@ export function useNodePingDisplay(
     return `平均丢包 ${pingStats.avgLoss.value.toFixed(1)}%${volatility}`
   })
 
-  const topPingNetworks = computed(() => {
+  function selectPingNetworks(limit: number): NodePingNetworkDisplay[] {
     const perTaskStats = pingStats.perTaskStats.value
     const configuredNames = appStore.pingNetworkOrder
 
-    // 未配置自定义顺序时保持默认行为：按 taskId 顺序取前 3 条
+    // 未配置自定义顺序时保持默认行为：按 taskId 顺序取前 limit 条。
     if (!configuredNames.length)
-      return perTaskStats.slice(0, PING_NETWORK_DISPLAY_COUNT).map(toNetworkDisplay)
+      return perTaskStats.slice(0, limit).map(toNetworkDisplay)
 
     const statsByName = new Map(perTaskStats.map(stat => [stat.name, stat]))
     const selected: NodePingPerTaskStat[] = []
     const usedTaskIds = new Set<number>()
 
-    // 按配置顺序精确匹配节点名称，最多取 3 条
+    // 按配置顺序精确匹配节点名称。
     for (const name of configuredNames) {
-      if (selected.length >= PING_NETWORK_DISPLAY_COUNT)
+      if (selected.length >= limit)
         break
       const stat = statsByName.get(name)
       if (stat && !usedTaskIds.has(stat.taskId)) {
@@ -245,9 +246,9 @@ export function useNodePingDisplay(
       }
     }
 
-    // 不足 3 条时用剩余任务（taskId 升序）补位
+    // 配置项不足时用剩余任务（taskId 升序）补位。
     for (const stat of perTaskStats) {
-      if (selected.length >= PING_NETWORK_DISPLAY_COUNT)
+      if (selected.length >= limit)
         break
       if (!usedTaskIds.has(stat.taskId)) {
         selected.push(stat)
@@ -256,7 +257,10 @@ export function useNodePingDisplay(
     }
 
     return selected.map(toNetworkDisplay)
-  })
+  }
+
+  const topPingNetworks = computed(() => selectPingNetworks(PING_NETWORK_DISPLAY_COUNT))
+  const summaryPingNetworks = computed(() => selectPingNetworks(PING_NETWORK_SUMMARY_DISPLAY_COUNT))
 
   return {
     pingStats,
@@ -272,5 +276,6 @@ export function useNodePingDisplay(
     isCached: pingStats.isCached,
     cachedAt: pingStats.cachedAt,
     topPingNetworks,
+    summaryPingNetworks,
   }
 }
