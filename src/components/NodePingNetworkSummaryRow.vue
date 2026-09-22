@@ -18,36 +18,19 @@ function getValueClass(network: NodePingNetworkDisplay): string {
 </script>
 
 <template>
-  <div class="flex justify-between" :class="networks.length > 3 ? 'items-start' : 'items-center'">
-    <span class="shrink-0 truncate leading-4">{{ label }}</span>
-    <div
-      class="mx-2 flex-1 border-t-2 border-dotted border-gray-500/10"
-      :class="networks.length > 3 ? 'mt-[7px]' : ''"
-    />
-    <div v-if="networks.length && networks.length <= 3" class="flex flex-row">
+  <div class="flex min-w-0 items-center justify-between">
+    <span class="shrink-0 truncate">{{ label }}</span>
+    <div class="mx-2 min-w-2 flex-1 border-t-2 border-dotted border-gray-500/10" />
+    <div v-if="networks.length" class="flex shrink-0 flex-row items-center whitespace-nowrap">
       <DataTooltip
         v-for="(network, index) in networks" :key="network.name" placement="top"
         :content="`${network.name}\n延迟 ${network.latency}\n丢包 ${network.loss}`"
         content-class="whitespace-pre-wrap w-max px-1.5 !leading-[1.2] text-[11px]"
+        class="shrink-0"
       >
-        <div class="truncate">
-          <span v-if="index" class="mx-1">·</span>
+        <div class="whitespace-nowrap">
+          <span v-if="index" :class="networks.length > 3 ? 'mx-0.5' : 'mx-1'">·</span>
           <span :class="getValueClass(network)">{{ getValue(network) }}</span>
-        </div>
-      </DataTooltip>
-    </div>
-    <div
-      v-else-if="networks.length"
-      class="grid w-36 max-w-[66%] shrink-0 grid-cols-3 gap-x-2 gap-y-1"
-    >
-      <DataTooltip
-        v-for="network in networks" :key="network.name" placement="top"
-        :content="`${network.name}\n延迟 ${network.latency}\n丢包 ${network.loss}`"
-        content-class="whitespace-pre-wrap w-max px-1.5 !leading-[1.2] text-[11px]"
-        class="min-w-0"
-      >
-        <div class="min-w-0 text-center leading-4">
-          <span class="whitespace-nowrap" :class="getValueClass(network)">{{ getValue(network) }}</span>
         </div>
       </DataTooltip>
     </div>
