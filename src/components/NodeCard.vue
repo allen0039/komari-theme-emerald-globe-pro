@@ -57,6 +57,23 @@ const priceTags = computed(() => getPriceTags(props.node, appStore.lang))
 const remainingTimeTagClass = computed(() => getRemainingTimeTagClass(props.node))
 const customTags = computed(() => getCustomTags(props.node))
 
+const returnRouteItems = computed(() => {
+  const labels = [
+    ['telecom', '电信'],
+    ['unicom', '联通'],
+    ['mobile', '移动'],
+  ] as const
+  const routes = props.node.return_routes ?? []
+
+  return labels
+    .map(([carrier, label]) => ({ carrier, label, route: routes.find(item => item.carrier === carrier) }))
+    .filter(item => item.route)
+})
+
+function returnRouteTooltip(label: string, stale: boolean) {
+  return stale ? `${label} · 待确认` : label
+}
+
 function openPingDialog() {
   emit('pingClick', props.node)
 }
@@ -241,6 +258,18 @@ function openPingDialog() {
                 <NodePingCacheMarker :is-cached="isPingCached" :cached-at="pingCachedAt" />
               </div>
               <NodePingNetworkSummaryRow label="丢包" metric="loss" :networks="summaryPingNetworks" />
+              <div v-if="returnRouteItems.length" class="flex min-w-0 items-center justify-between text-[11px]">
+                <span class="shrink-0 truncate text-muted-foreground">线路</span>
+                <div class="mx-2 min-w-2 flex-1 border-t-2 border-dotted border-gray-500/10" />
+                <div class="flex shrink-0 items-center whitespace-nowrap text-green-600">
+                  <template v-for="(item, index) in returnRouteItems" :key="item.carrier">
+                    <DataTooltip placement="top" content-class="whitespace-nowrap" :content="returnRouteTooltip(item.label, item.route!.stale)" class="shrink-0">
+                      <span class="whitespace-nowrap">{{ item.route!.route_type || 'Unknown' }}<template v-if="item.route!.stale">（待确认）</template></span>
+                    </DataTooltip>
+                    <span v-if="index < returnRouteItems.length - 1" class="mx-1 shrink-0">·</span>
+                  </template>
+                </div>
+              </div>
               <div class="grid grid-cols-6 gap-x-3">
                 <!-- 延迟 -->
                 <div

@@ -140,6 +140,15 @@ export interface Client {
   traffic_limit_type: string
   created_at: string
   updated_at: string
+  return_routes?: ReturnRouteSummary[]
+}
+
+export interface ReturnRouteSummary {
+  carrier: 'telecom' | 'unicom' | 'mobile' | string
+  route_type: string
+  confidence: string
+  tested_at: string
+  stale: boolean
 }
 
 /** 公开站点信息 */

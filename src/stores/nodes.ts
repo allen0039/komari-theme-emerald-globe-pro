@@ -1,4 +1,4 @@
-import type { Client, NodeStatus, NodeStatusPing } from '@/utils/rpc'
+import type { Client, NodeStatus, NodeStatusPing, ReturnRouteSummary } from '@/utils/rpc'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { parseNodeGroups } from '@/utils/groupHelper'
@@ -40,6 +40,7 @@ export interface NodeData {
   traffic_limit_type: TrafficLimitType
   created_at: string
   updated_at: string
+  return_routes?: ReturnRouteSummary[]
   // Status 信息
   statusObserved: boolean
   online: boolean
@@ -164,6 +165,7 @@ const useNodesStore = defineStore('nodes', () => {
       traffic_limit_type: client.traffic_limit_type as TrafficLimitType,
       created_at: client.created_at,
       updated_at: client.updated_at,
+      return_routes: client.return_routes,
       // Status 默认值
       statusObserved: false,
       online: false,
