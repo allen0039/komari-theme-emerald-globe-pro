@@ -506,7 +506,14 @@ watch(shouldRender, (visible) => {
 }
 
 .earth-globe-host-compact :deep(.earth-rate-panel) {
-  display: none;
+  /* Keep the region detail anchor in the mobile layout so the flag has a
+   * stable positioning box and the mobile globe stays consistent with the
+   * desktop view. The smaller type keeps labels readable without taking over
+   * the globe on narrow screens. */
+  display: block;
+  padding: 0.125rem 0.25rem;
+  font-size: 0.5625rem;
+  line-height: 0.75rem;
 }
 
 .earth-globe-host-compact :deep(.earth-label-flag) {
