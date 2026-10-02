@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { formatBytes } from '@/utils/helper'
-import { calculateTrafficUsed } from '@/utils/nodeHelpers'
+import { calculateCalibratedTrafficUsed } from '@/utils/nodeHelpers'
 
 export interface TrafficProgressProps {
   upload: number
   download: number
   trafficLimit: number
   trafficLimitType: 'up' | 'down' | 'min' | 'max' | 'sum'
+  trafficUsedOffset?: number
   uploadColor?: string
   downloadColor?: string
   singleColor?: string
@@ -21,11 +22,12 @@ const props = withDefaults(defineProps<TrafficProgressProps>(), {
   singleColor: undefined,
   height: undefined,
   showIndicator: false,
+  trafficUsedOffset: 0,
 })
 
 const showProgress = computed(() => props.trafficLimit > 0)
 
-const usedTraffic = computed(() => calculateTrafficUsed(props.upload, props.download, props.trafficLimitType))
+const usedTraffic = computed(() => calculateCalibratedTrafficUsed(props.upload, props.download, props.trafficLimitType, props.trafficUsedOffset))
 
 const totalPercentage = computed(() => {
   if (props.trafficLimit <= 0)
@@ -45,7 +47,7 @@ const downloadPercentage = computed(() => {
   return Math.min((props.download / props.trafficLimit) * 100, 100)
 })
 
-const isDualColorMode = computed(() => props.trafficLimitType === 'sum')
+const isDualColorMode = computed(() => props.trafficLimitType === 'sum' && props.trafficUsedOffset === 0)
 
 const progressHeight = computed(() => {
   if (props.height === undefined)

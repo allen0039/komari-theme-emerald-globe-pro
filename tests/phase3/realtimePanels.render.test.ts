@@ -11,6 +11,7 @@ import { buildResourceOverviewContract } from '../../src/features/resource-overv
 import { buildLiveTrafficViewModel } from '../../src/features/resource-overview/realtime'
 
 let viteServer: ViteDevServer
+let TrafficProgress: Component
 let LiveTrafficPanel: Component
 let PressureHeatmapPanel: Component
 let QuotaRankingPanel: Component
@@ -54,6 +55,7 @@ beforeAll(async () => {
     optimizeDeps: { noDiscovery: true },
     server: { middlewareMode: true },
   })
+  TrafficProgress = (await viteServer.ssrLoadModule('/src/components/TrafficProgress.vue')).default
   LiveTrafficPanel = (await viteServer.ssrLoadModule('/src/components/resource-overview/LiveTrafficPanel.vue')).default
   PressureHeatmapPanel = (await viteServer.ssrLoadModule('/src/components/resource-overview/PressureHeatmapPanel.vue')).default
   QuotaRankingPanel = (await viteServer.ssrLoadModule('/src/components/resource-overview/QuotaRankingPanel.vue')).default
@@ -65,6 +67,26 @@ afterAll(async () => {
 })
 
 describe('phase 3 realtime panel rendering', () => {
+  test('renders calibrated quota text and progress width together', async () => {
+    const html = await renderToString(createSSRApp(TrafficProgress, {
+      upload: 100,
+      download: 200,
+      trafficLimit: 1000,
+      trafficLimitType: 'sum',
+      trafficUsedOffset: 400,
+      showIndicator: true,
+    }))
+    expect(html).toContain('width:70%')
+    expect(html).toContain('70.0%')
+    expect(html).toContain('700.0 B / 1000.0 B')
+    const uncalibrated = await renderToString(createSSRApp(TrafficProgress, {
+      upload: 100, download: 200, trafficLimit: 1000, trafficLimitType: 'sum', showIndicator: true,
+    }))
+    expect(uncalibrated).toContain('width:10%')
+    expect(uncalibrated).toContain('width:20%')
+    expect(uncalibrated).toContain('30.0%')
+  })
+
   test('keeps cached realtime node content out of the loading skeleton', async () => {
     const modules = buildResourceOverviewContract().rows.flatMap(row => row.modules)
     const liveModule = modules.find(module => module.id === 'live-traffic') as LiveTrafficModuleContract

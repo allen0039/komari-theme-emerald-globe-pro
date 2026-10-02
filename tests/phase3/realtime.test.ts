@@ -11,6 +11,7 @@ import {
   selectQuotaRows,
 } from '../../src/features/resource-overview/realtime'
 import { useNodesStore } from '../../src/stores/nodes'
+import { getTrafficUsed, getTrafficUsedPercentage } from '../../src/utils/nodeHelpers'
 
 function node(overrides: Partial<NodeData> = {}): NodeData {
   return {
@@ -65,6 +66,33 @@ function node(overrides: Partial<NodeData> = {}): NodeData {
 }
 
 describe('phase 3 realtime resource derivation', () => {
+  test('adds calibration once to every quota direction and keeps telemetry raw', () => {
+    for (const [type, raw] of [['up', 100], ['down', 200], ['min', 100], ['max', 200], ['sum', 300]] as const) {
+      const sample = node({ traffic_limit_type: type, traffic_used_offset: 700 })
+      expect(getTrafficUsed(sample)).toBe(raw + 700)
+      expect(getTrafficUsedPercentage(sample)).toBe((raw + 700) / 10)
+      expect(buildQuotaRows([sample])[0]?.used).toBe(raw + 700)
+      expect(sample.net_total_up).toBe(100)
+      expect(sample.net_total_down).toBe(200)
+      expect(getTrafficUsed(node({ ...sample, net_total_up: 0, net_total_down: 0 }))).toBe(700)
+    }
+    expect(getTrafficUsed(node())).toBe(300)
+    expect(getTrafficUsedPercentage(node({ traffic_used_offset: 2000 }))).toBe(100)
+  })
+
+  test('retains server calibration when initializing and refreshing status', () => {
+    setActivePinia(createPinia())
+    const store = useNodesStore()
+    const sample = node({ traffic_used_offset: 700 })
+    store.initNodes({ [sample.uuid]: sample }, { [sample.uuid]: sample })
+    expect(getTrafficUsed(store.nodes[0]!)).toBe(1000)
+    store.updateNodeStatuses({ [sample.uuid]: { ...sample, net_total_up: 0, net_total_down: 0 } })
+    expect(store.nodes[0]?.traffic_used_offset).toBe(700)
+    expect(getTrafficUsed(store.nodes[0]!)).toBe(700)
+    store.initNodes({ [sample.uuid]: { ...sample, traffic_used_offset: 0 } }, { [sample.uuid]: sample })
+    expect(getTrafficUsed(store.nodes[0]!)).toBe(300)
+  })
+
   test('builds a truthful runtime summary without turning invalid samples into zero', () => {
     const summary = buildRuntimeSummary([
       node({ uuid: 'a', name: 'a', net_in: 1024, net_out: 2048 }),

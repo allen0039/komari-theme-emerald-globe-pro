@@ -2,7 +2,7 @@ import type { NodeData, TrafficLimitType } from '@/stores/nodes'
 import { getCountryCodeFromRegion } from '@/utils/geoHelper'
 import { parseNodeGroups } from '@/utils/groupHelper'
 import { formatBytes, formatBytesPerSecond, getStatus } from '@/utils/helper'
-import { calculateTrafficUsed } from '@/utils/nodeHelpers'
+import { calculateCalibratedTrafficUsed } from '@/utils/nodeHelpers'
 import { getEmojiByCode, getRegionDisplayName } from '@/utils/regionHelper'
 
 export type PressureMetric = 'cpu' | 'memory' | 'disk'
@@ -236,7 +236,11 @@ function buildQuotaRow(node: NodeData): QuotaRowViewModel {
   if (upload === null || download === null)
     return invalidQuotaRow(node, '计数异常')
 
-  const used = calculateTrafficUsed(upload, download, runtimeType as TrafficLimitType)
+  const offset = nonNegativeFinite(node.traffic_used_offset ?? 0)
+  if (offset === null)
+    return invalidQuotaRow(node, '校准值异常')
+
+  const used = calculateCalibratedTrafficUsed(upload, download, runtimeType as TrafficLimitType, offset)
   if (!Number.isFinite(used) || used < 0)
     return invalidQuotaRow(node, '计数异常')
   const percentage = (used / limit) * 100

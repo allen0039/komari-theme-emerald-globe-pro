@@ -78,6 +78,7 @@ export interface NodeInfo {
   public_remark: string
   hidden: boolean
   traffic_limit: number
+  traffic_used_offset?: number
   traffic_limit_type: string
   created_at: string
   updated_at: string

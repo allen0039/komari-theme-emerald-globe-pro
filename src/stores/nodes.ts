@@ -37,6 +37,7 @@ export interface NodeData {
   tags: string
   hidden: boolean
   traffic_limit: number
+  traffic_used_offset?: number
   traffic_limit_type: TrafficLimitType
   created_at: string
   updated_at: string
@@ -161,6 +162,7 @@ const useNodesStore = defineStore('nodes', () => {
       tags: client.tags,
       hidden: client.hidden,
       traffic_limit: client.traffic_limit,
+      traffic_used_offset: client.traffic_used_offset ?? 0,
       traffic_limit_type: client.traffic_limit_type as TrafficLimitType,
       created_at: client.created_at,
       updated_at: client.updated_at,
