@@ -9,6 +9,7 @@ export interface TrafficProgressProps {
   trafficLimit: number
   trafficLimitType: 'up' | 'down' | 'min' | 'max' | 'sum'
   trafficUsedOffset?: number
+  trafficCalibrationBaseline?: number | null
   uploadColor?: string
   downloadColor?: string
   singleColor?: string
@@ -27,7 +28,7 @@ const props = withDefaults(defineProps<TrafficProgressProps>(), {
 
 const showProgress = computed(() => props.trafficLimit > 0)
 
-const usedTraffic = computed(() => calculateCalibratedTrafficUsed(props.upload, props.download, props.trafficLimitType, props.trafficUsedOffset))
+const usedTraffic = computed(() => calculateCalibratedTrafficUsed(props.upload, props.download, props.trafficLimitType, props.trafficUsedOffset, props.trafficCalibrationBaseline))
 
 const totalPercentage = computed(() => {
   if (props.trafficLimit <= 0)

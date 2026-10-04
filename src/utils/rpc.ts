@@ -138,6 +138,7 @@ export interface Client {
   hidden: boolean
   traffic_limit: number
   traffic_used_offset?: number
+  traffic_calibration_baseline?: number | null
   traffic_limit_type: string
   created_at: string
   updated_at: string

@@ -240,7 +240,11 @@ function buildQuotaRow(node: NodeData): QuotaRowViewModel {
   if (offset === null)
     return invalidQuotaRow(node, '校准值异常')
 
-  const used = calculateCalibratedTrafficUsed(upload, download, runtimeType as TrafficLimitType, offset)
+  const baseline = node.traffic_calibration_baseline
+  if (baseline != null && nonNegativeFinite(baseline) === null)
+    return invalidQuotaRow(node, '校准基准异常')
+
+  const used = calculateCalibratedTrafficUsed(upload, download, runtimeType as TrafficLimitType, offset, baseline)
   if (!Number.isFinite(used) || used < 0)
     return invalidQuotaRow(node, '计数异常')
   const percentage = (used / limit) * 100

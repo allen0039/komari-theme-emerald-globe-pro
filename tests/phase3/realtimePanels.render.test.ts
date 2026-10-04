@@ -67,6 +67,16 @@ afterAll(async () => {
 })
 
 describe('phase 3 realtime panel rendering', () => {
+  test('renders the replacement total rather than raw usage plus the target', async () => {
+    const html = await renderToString(createSSRApp(TrafficProgress, {
+      upload: 100, download: 200, trafficLimit: 1000, trafficLimitType: 'sum',
+      trafficUsedOffset: 168, trafficCalibrationBaseline: 300, showIndicator: true,
+    }))
+    expect(html).toContain('width:16.8%')
+    expect(html).toContain('168.0 B / 1000.0 B')
+    expect(html).not.toContain('468.0 B')
+  })
+
   test('renders calibrated quota text and progress width together', async () => {
     const html = await renderToString(createSSRApp(TrafficProgress, {
       upload: 100,

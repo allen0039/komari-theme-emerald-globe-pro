@@ -66,6 +66,34 @@ function node(overrides: Partial<NodeData> = {}): NodeData {
 }
 
 describe('phase 3 realtime resource derivation', () => {
+  test('uses the entered total as the current quota then counts only subsequent traffic', () => {
+    for (const [type, baseline] of [['up', 100], ['down', 200], ['min', 100], ['max', 200], ['sum', 300]] as const) {
+      const sample = node({ traffic_limit_type: type, traffic_used_offset: 168, traffic_calibration_baseline: baseline })
+      expect(getTrafficUsed(sample)).toBe(168)
+      expect(buildQuotaRows([sample])[0]?.used).toBe(168)
+      expect(getTrafficUsedPercentage(sample)).toBeCloseTo(16.8)
+      const grown = node({ ...sample, net_total_up: 110, net_total_down: 210 })
+      expect(getTrafficUsed(grown)).toBe(type === 'sum' ? 188 : 178)
+      expect(sample.net_total_up).toBe(100)
+      expect(sample.net_total_down).toBe(200)
+    }
+    // Offline or legacy values waiting for a baseline must not double count raw usage.
+    expect(getTrafficUsed(node({ traffic_used_offset: 168, traffic_calibration_baseline: null }))).toBe(168)
+    expect(getTrafficUsed(node({ traffic_used_offset: 0, traffic_calibration_baseline: null }))).toBe(300)
+  })
+
+  test('refreshes calibration baselines and removes them on monthly reset', () => {
+    setActivePinia(createPinia())
+    const store = useNodesStore()
+    const sample = node({ traffic_used_offset: 168, traffic_calibration_baseline: 300 })
+    store.initNodes({ [sample.uuid]: sample }, { [sample.uuid]: sample })
+    expect(getTrafficUsed(store.nodes[0]!)).toBe(168)
+    store.updateNodeStatuses({ [sample.uuid]: { ...sample, net_total_up: 120 } })
+    expect(getTrafficUsed(store.nodes[0]!)).toBe(188)
+    store.updateNodeClients({ [sample.uuid]: { ...sample, traffic_used_offset: 0, traffic_calibration_baseline: null } })
+    expect(getTrafficUsed(store.nodes[0]!)).toBe(320)
+  })
+
   test('adds calibration once to every quota direction and keeps telemetry raw', () => {
     for (const [type, raw] of [['up', 100], ['down', 200], ['min', 100], ['max', 200], ['sum', 300]] as const) {
       const sample = node({ traffic_limit_type: type, traffic_used_offset: 700 })

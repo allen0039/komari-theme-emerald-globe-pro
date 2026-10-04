@@ -23,8 +23,14 @@ export function calculateTrafficUsed(upload: number, download: number, type: Tra
 }
 
 // Calibration affects displayed quota usage only; directional samples stay raw.
-export function calculateCalibratedTrafficUsed(upload: number, download: number, type: TrafficLimitType, offset = 0): number {
-  return calculateTrafficUsed(upload, download, type) + Math.max(0, offset || 0)
+export function calculateCalibratedTrafficUsed(upload: number, download: number, type: TrafficLimitType, target = 0, baseline?: number | null): number {
+  const raw = calculateTrafficUsed(upload, download, type)
+  if (target <= 0)
+    return raw
+  // Preserve compatibility with older panels that exposed only an additive offset.
+  if (baseline === undefined)
+    return raw + target
+  return target + (baseline === null ? 0 : Math.max(0, raw - baseline))
 }
 
 export function showTrafficProgress(node: NodeData): boolean {
@@ -33,7 +39,7 @@ export function showTrafficProgress(node: NodeData): boolean {
 
 export function getTrafficUsed(node: NodeData): number {
   const { net_total_up = 0, net_total_down = 0, traffic_limit_type } = node
-  return calculateCalibratedTrafficUsed(net_total_up, net_total_down, traffic_limit_type, node.traffic_used_offset)
+  return calculateCalibratedTrafficUsed(net_total_up, net_total_down, traffic_limit_type, node.traffic_used_offset, node.traffic_calibration_baseline)
 }
 
 export function getTrafficUsedPercentage(node: NodeData): number {
